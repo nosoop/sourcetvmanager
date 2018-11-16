@@ -375,6 +375,17 @@ native void SourceTV_GetClientIP(int client, char[] ip, int maxlen);
 native void SourceTV_GetClientPassword(int client, char[] password, int maxlen);
 
 /**
+ * Get a SourceTV spectator client's FCVAR_USERINFO setting.
+ *
+ * @param client	The spectator client index.
+ * @param cvar	The client setting to get.
+ * @param buffer	Buffer for the result.
+ * @param maxlen	Maximal length of the buffer.
+ * @error	Invalid client index or not connected.
+ */
+native void SourceTV_GetClientUserSetting(int client, const char[] cvar, char[] buffer, int maxlen);
+
+/**
  * Kick a SourceTV spectator client.
  * 
  * @param client	The spectator client index.

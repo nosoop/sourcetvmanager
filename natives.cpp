@@ -775,6 +775,32 @@ static cell_t Native_GetClientPassword(IPluginContext *pContext, const cell_t *p
 	return 0;
 }
 
+// native SourceTV_GetClientUserSetting(client, const String:setting[], String:buffer[], maxlen);
+static cell_t Native_GetClientUserSetting(IPluginContext *pContext, const cell_t *params)
+{
+	if (hltvserver == nullptr)
+		return 0;
+
+	cell_t client = params[1];
+	if (client < 1 || client > hltvserver->GetBaseServer()->GetClientCount())
+	{
+		pContext->ReportError("Invalid spectator client index %d.", client);
+		return 0;
+	}
+
+	HLTVClientWrapper *pClient = hltvserver->GetClient(client);
+	if (!pClient->IsConnected())
+	{
+		pContext->ReportError("Client %d is not connected.", client);
+		return 0;
+	}
+
+	char* cvar;
+	pContext->LocalToString(params[2], &cvar);
+	pContext->StringToLocalUTF8(params[3], static_cast<size_t>(params[4]), pClient->BaseClient()->GetUserSetting(cvar), NULL);
+	return 0;
+}
+
 // native SourceTV_KickClient(client, const String:sReason[]);
 static cell_t Native_KickClient(IPluginContext *pContext, const cell_t *params)
 {
@@ -980,6 +1006,7 @@ const sp_nativeinfo_t sourcetv_natives[] =
 	{ "SourceTV_GetClientName", Native_GetClientName },
 	{ "SourceTV_GetClientIP", Native_GetClientIP },
 	{ "SourceTV_GetClientPassword", Native_GetClientPassword },
+	{ "SourceTV_GetClientUserSetting", Native_GetClientUserSetting },
 	{ "SourceTV_KickClient", Native_KickClient },
 	{ "SourceTV_PrintToChat", Native_PrintToChat },
 	{ "SourceTV_PrintToConsole", Native_PrintToConsole },
